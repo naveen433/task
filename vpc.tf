@@ -16,28 +16,23 @@ resource "aws_vpc" "main" {
 # =========================
 # Create your subnets here
 # =========================
-data "aws_availability_zones" "available" {}resource "aws_vpc" "main" {
-  cidr_block           = "192.170.0.0/20"
-  enable_dns_hostnames = true
-  tags {
-    Name = "main"
-  }
-}resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnet" {
   count = "${length(data.aws_availability_zones.available.names)}"
   vpc_id = "${aws_vpc.main.id}"
-  cidr_block = "192.170.${10+count.index}.0/24"
+  cidr_block = element(var.public_subnet_cidr, count.index)
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = true
-  tags {
+  tags = {
     Name = "PublicSubnet"
   }
-}resource "aws_subnet" "private_subnet" {
+}
+resource "aws_subnet" "private_subnet" {
   count = "${length(data.aws_availability_zones.available.names)}"
   vpc_id = "${aws_vpc.main.id}"
-  cidr_block = "192.170.${20+count.index}.0/24"
+  cidr_block = element(var.private_subnet_cidr, count.index)
   availability_zone= "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = false
-  tags {
+  tags = {
     Name = "PrivateSubnet"
   }
 }

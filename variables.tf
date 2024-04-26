@@ -29,3 +29,13 @@ variable "vpc_cidr" {
     error_message = "CIDR size must be at least /20 and no larger than /16"
   }
 }
+
+variable "public_subnet_cidr" {
+  type = list(string)
+  description = "The IPv4 CIDR block for the public subnet"
+}
+
+variable "private_subnet_cidr" {
+  type = list(string)
+  description = "The IPv4 CIDR block for the private subnet"
+}
