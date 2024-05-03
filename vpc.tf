@@ -1,9 +1,13 @@
 module "label_vpc" {
   source     = "cloudposse/label/null"
   version    = "0.25.0"
-  context    = module.base_label.context
+  namespace  = "label"
   name       = "vpc"
-  attributes = ["main"]
+  delimiter  = "_"
+
+  tags = {
+    Name = "vpc"
+  } 
 }
 
 resource "aws_vpc" "main" {
@@ -22,9 +26,7 @@ resource "aws_subnet" "public_subnet" {
   cidr_block = element(var.public_subnet_cidr, count.index)
   availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = true
-  tags = {
-    Name = "Public Subnet ${count.index + 1}"
-  }
+  tags = module.label_vpc.tags
 }
 resource "aws_subnet" "private_subnet" {
   count = "${length(data.aws_availability_zones.available.names)}"
@@ -32,9 +34,7 @@ resource "aws_subnet" "private_subnet" {
   cidr_block = element(var.private_subnet_cidr, count.index)
   availability_zone= "${data.aws_availability_zones.available.names[count.index]}"
   map_public_ip_on_launch = false
-  tags = {
-    Name = "Private Subnet ${count.index + 1}"
-  }
+  tags = module.label_vpc.tags
 }
 
 # Creating an Internet Gateway for the VPC

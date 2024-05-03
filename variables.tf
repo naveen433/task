@@ -33,9 +33,19 @@ variable "vpc_cidr" {
 variable "public_subnet_cidr" {
   type = list(string)
   description = "The IPv4 CIDR block for the public subnet"
+  default     = ["192.170.1.0/24", "192.170.2.0/24", "192.170.3.0/24"]
+  validation {
+    condition     = tonumber(split("/", var.public_subnet_cidr)[1]) <= 28 && tonumber(split("/", var.public_subnet_cidr)[1]) >= 24
+    error_message = "CIDR size must be at least /28 and no lorger than 24"
+  }
 }
 
 variable "private_subnet_cidr" {
   type = list(string)
   description = "The IPv4 CIDR block for the private subnet"
+  default     = ["192.170.1.0/24", "192.170.2.0/24", "192.170.3.0/24"]
+   validation {
+    condition     = tonumber(split("/", var.private_subnet_cidr)[1]) <= 28 && tonumber(split("/", var.private_subnet_cidr)[1]) >= 24
+    error_message = "CIDR size must be at least /28 and no lorger than 24"
+  }
 }
